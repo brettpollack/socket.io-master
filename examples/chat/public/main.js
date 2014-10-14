@@ -52,8 +52,10 @@ $(function() {
 
 //    This function parses the flatten coordinates into an object again and then displays it as a square
 
-    function addTappingPoint(str){
-        var final_coordinates = JSON.parse(str);
+    function addTappingPoint(final_coordinates){
+        // NVS, we'll just use the original name since it's already
+        // an array
+        // NVS var final_coordinates = JSON.parse(str);
         jQuery('<div/>', {
             id: 'final_coordinates_div'
         }).appendTo('#A');
@@ -69,10 +71,10 @@ $(function() {
 
     // This function flattens the coordinates object so we can send it accross and then calls addTappingPoint and the socket.emit(new coordinates) event
     function sendCoordinates (obj) {
-        var flat_coordinates = JSON.stringify(obj);
+        // NVS var flat_coordinates = JSON.stringify(obj);
         // if there is a non-empty message and a socket connection
         if (obj && connected) {
-            addTappingPoint(flat_coordinates);
+            // NVS addTappingPoint(flat_coordinates);
             // tell server to execute 'new message' and send along one parameter
             socket.emit('new coordinates', coordinates);
 
@@ -299,7 +301,9 @@ $(function() {
 
     // Whenever the server emits 'new coordinates', update the chat body
     socket.on('new coordinates', function (data) {
-        addTappingPoint(data);
+        // NVS - we receive an object back so we have to explicitly pass
+        // the coordinates part of the message (ignoring username)
+        addTappingPoint(data.message);
     });
 
   // Whenever the server emits 'user joined', log it in the chat body
@@ -344,5 +348,3 @@ $(function() {
 //        alert( (e.pageX - posX) + ' , ' + (e.pageY - posY));
 //    });
 //});
-
-
