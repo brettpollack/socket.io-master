@@ -60,8 +60,8 @@ $(function() {
         $( "#final_coordinates_div" ).css( {
             "background-color": "red",
             "position": "absolute",
-            "left": coordinates[0],
-            "top": coordinates[1],
+            "left": final_coordinates[0],
+            "top": final_coordinates[1],
             "width": "20px",
             "height": "20px"
         });
@@ -297,9 +297,9 @@ $(function() {
     addChatMessage(data);
   });
 
-    // Whenever the server emits 'new message', update the chat body
-    socket.on('new coordinates', function () {
-        addTappingPoint();
+    // Whenever the server emits 'new coordinates', update the chat body
+    socket.on('new coordinates', function (data) {
+        addTappingPoint(data);
     });
 
   // Whenever the server emits 'user joined', log it in the chat body
@@ -344,6 +344,5 @@ $(function() {
 //        alert( (e.pageX - posX) + ' , ' + (e.pageY - posY));
 //    });
 //});
-
 
 
