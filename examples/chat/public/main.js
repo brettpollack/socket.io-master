@@ -26,7 +26,10 @@ $(function() {
 
   var socket = io();
 
-//    Prints a square when the user clicks
+//    This piece of functionality does three things:
+//    It prints a red square when and where the user clicks
+//    It stores the click's coordinates in an object called coordinates
+//    It calls the sendSquare function
 
     $(document).ready(function(e) {
         $('#A').click(function(e) {
@@ -43,21 +46,35 @@ $(function() {
                 "width": "20px",
                 "height": "20px"
             });
-            sendSquare();
+            sendCoordinates(coordinates);
         });
     });
-    function addTappingPoint(){
-        var $messageDiv = $('#coordinates_div').appendTo($messageBodyDiv);
+
+//    This function parses the flatten coordinates into an object again and then displays it as a square
+
+    function addTappingPoint(str){
+        var final_coordinates = JSON.parse(str);
+        jQuery('<div/>', {
+            id: 'final_coordinates_div'
+        }).appendTo('#A');
+        $( "#final_coordinates_div" ).css( {
+            "background-color": "red",
+            "position": "absolute",
+            "left": coordinates[0],
+            "top": coordinates[1],
+            "width": "20px",
+            "height": "20px"
+        });
     }
 
-    // Sends the square on the right coordinates
-    function sendSquare () {
-        var square = $('#coordinates_div');
+    // This function flattens the coordinates object so we can send it accross and then calls addTappingPoint and the socket.emit(new coordinates) event
+    function sendCoordinates (obj) {
+        var flat_coordinates = JSON.stringify(obj);
         // if there is a non-empty message and a socket connection
-        if (square && connected) {
-            addTappingPoint();
+        if (obj && connected) {
+            addTappingPoint(flat_coordinates);
             // tell server to execute 'new message' and send along one parameter
-            socket.emit('new square', square);
+            socket.emit('new coordinates', coordinates);
 
         }
     }
@@ -281,7 +298,7 @@ $(function() {
   });
 
     // Whenever the server emits 'new message', update the chat body
-    socket.on('new tapping_point', function () {
+    socket.on('new coordinates', function () {
         addTappingPoint();
     });
 
@@ -327,5 +344,6 @@ $(function() {
 //        alert( (e.pageX - posX) + ' , ' + (e.pageY - posY));
 //    });
 //});
+
 
 
