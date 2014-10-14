@@ -30,6 +30,17 @@ io.on('connection', function (socket) {
     });
   });
 
+    // when the client emits 'new coordinates', this listens and executes
+    socket.on('new coordinates', function (data) {
+        // we tell the client to execute 'new coordinates'
+        socket.broadcast.emit('new coordinates', {
+            username: socket.username,
+            message: data
+        });
+    });
+
+
+
   // when the client emits 'add user', this listens and executes
   socket.on('add user', function (username) {
     // we store the username in the socket session for this client
