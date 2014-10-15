@@ -9,7 +9,9 @@ $(function() {
 
   // Initialize varibles
   var $coordinates;
-  var $window = $(window);
+    var pageDimensions = [$('body').width(),$('body').height()];
+    
+    var $window = $(window);
   var $usernameInput = $('.usernameInput'); // Input for username
   var $messages = $('.messages'); // Messages area
   var $inputMessage = $('.inputMessage'); // Input message input box
@@ -23,7 +25,8 @@ $(function() {
   var typing = false;
   var lastTypingTime;
   var $currentInput = $usernameInput.focus();
-
+    
+    
   var socket = io();
 
 //    This piece of functionality does three things:
@@ -31,53 +34,40 @@ $(function() {
 //    It stores the click's coordinates in an object called coordinates
 //    It calls the sendSquare function
 
-    $(document).ready(function(e) {
-        $('#A').click(function(e) {
-            console.log(e.pageX+ ' , ' + e.pageY);
-            coordinates = [e.pageX, e.pageY];
-            jQuery('<div/>', {
-                id: 'coordinates_div'
-            }).appendTo('#A');
-            $( "#coordinates_div" ).css( {
-                "background-color": "red",
-                "position": "absolute",
-                "left": coordinates[0],
-                "top": coordinates[1],
-                "width": "20px",
-                "height": "20px"
-            });
-            sendCoordinates(coordinates);
-        });
+    $('#A').click(function(e) {
+    //console.log(e.pageX+ ' , ' + e.pageY);
+        coordinates = [e.pageX, e.pageY];
+        addTappingPoint(coordinates.concat(pageDimensions));
+        sendCoordinates(coordinates.concat(pageDimensions));
     });
 
 //    This function parses the flatten coordinates into an object again and then displays it as a square
 
     function addTappingPoint(final_coordinates){
-        // NVS, we'll just use the original name since it's already
-        // an array
-        // NVS var final_coordinates = JSON.parse(str);
-        jQuery('<div/>', {
-            id: 'final_coordinates_div'
-        }).appendTo('#A');
-        $( "#final_coordinates_div" ).css( {
-            "background-color": "red",
-            "position": "absolute",
-            "left": final_coordinates[0],
-            "top": final_coordinates[1],
-            "width": "20px",
-            "height": "20px"
+        //console.log(final_coordinates);
+        var thisPoint = jQuery('<div/>', {
+            class: 'coordinates_div pre-animate'
+        }).appendTo('#A').css( {
+            "left": final_coordinates[0]*(pageDimensions[0] / final_coordinates[2]),
+            "top": final_coordinates[1] * ( pageDimensions[1] / final_coordinates[3])
+        });
+        $(thisPoint).offset()
+        $(thisPoint).removeClass('pre-animate')
+        
+        $(thisPoint).on('transitionend webkitTransitionEnd oTransitionEnd', function(e) {
+            if (e.originalEvent.propertyName == 'opacity') {
+                $(this).remove(); 
+            }
         });
     }
 
     // This function flattens the coordinates object so we can send it accross and then calls addTappingPoint and the socket.emit(new coordinates) event
     function sendCoordinates (obj) {
-        // NVS var flat_coordinates = JSON.stringify(obj);
         // if there is a non-empty message and a socket connection
         if (obj && connected) {
             // NVS addTappingPoint(flat_coordinates);
             // tell server to execute 'new message' and send along one parameter
-            socket.emit('new coordinates', coordinates);
-
+            socket.emit('new coordinates', obj);
         }
     }
 
@@ -94,6 +84,7 @@ $(function() {
   }
 
   // Sets the client's username
+    /*
   function setUsername () {
     username = cleanInput($usernameInput.val().trim());
 
@@ -108,7 +99,9 @@ $(function() {
       socket.emit('add user', username);
     }
   }
-
+*/
+    //NVS add a username
+    socket.emit('add user', 'xyz');
   // Sends a chat message
   function sendMessage () {
     var message = $inputMessage.val();
@@ -247,7 +240,7 @@ $(function() {
   }
 
   // Keyboard events
-
+/*
   $window.keydown(function (event) {
     // Auto-focus the current input when a key is typed
     if (!(event.ctrlKey || event.metaKey || event.altKey)) {
@@ -280,7 +273,7 @@ $(function() {
   $inputMessage.click(function () {
     $inputMessage.focus();
   });
-
+*/
   // Socket events
 
   // Whenever the server emits 'login', log the login message
@@ -288,15 +281,17 @@ $(function() {
     connected = true;
     // Display the welcome message
     var message = "Welcome to Socket.IO Chat – ";
-    log(message, {
+    /*
+      log(message, {
       prepend: true
     });
     addParticipantsMessage(data);
+    */
   });
 
   // Whenever the server emits 'new message', update the chat body
   socket.on('new message', function (data) {
-    addChatMessage(data);
+    //addChatMessage(data);
   });
 
     // Whenever the server emits 'new coordinates', update the chat body
@@ -308,27 +303,27 @@ $(function() {
 
   // Whenever the server emits 'user joined', log it in the chat body
   socket.on('user joined', function (data) {
-    log(data.username + ' joined');
-    addParticipantsMessage(data);
+    //log(data.username + ' joined');
+    //addParticipantsMessage(data);
   });
 
 
 
   // Whenever the server emits 'user left', log it in the chat body
   socket.on('user left', function (data) {
-    log(data.username + ' left');
-    addParticipantsMessage(data);
-    removeChatTyping(data);
+    //log(data.username + ' left');
+    //addParticipantsMessage(data);
+    //removeChatTyping(data);
   });
 
   // Whenever the server emits 'typing', show the typing message
   socket.on('typing', function (data) {
-    addChatTyping(data);
+    //addChatTyping(data);
   });
 
   // Whenever the server emits 'stop typing', kill the typing message
   socket.on('stop typing', function (data) {
-    removeChatTyping(data);
+    //removeChatTyping(data);
   });
 });
 
