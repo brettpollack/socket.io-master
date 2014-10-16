@@ -18,6 +18,11 @@ $(function() {
     }
     var myColor = getRandomColor();
     
+    // enable an oscillator for some sounds
+    var context = new webkitAudioContext();//webkit browsers only
+    
+    
+    
     // start out disconnected until acknowledged
     var connected = false;  
 
@@ -29,7 +34,7 @@ $(function() {
     //    It calls the sendSquare function
 
     $('#stage').click(function(e) {
-        console.log(e.pageX+ ' , ' + e.pageY);
+        //console.log(e.pageX+ ' , ' + e.pageY);
         coordinates = [e.pageX, e.pageY];
         addTappingPoint(coordinates.concat(pageDimensions).concat(myColor));
         sendCoordinates(coordinates.concat(pageDimensions).concat(myColor));
@@ -38,7 +43,15 @@ $(function() {
     //    This function parses the flatten coordinates into an object again and then displays it as a square
 
     function addTappingPoint(final_coordinates){
-        console.log(final_coordinates);
+        //console.log(final_coordinates);
+        
+        var oscillator = context.createOscillator();
+        oscillator.type = 0; // sine wave
+        oscillator.frequency.value = final_coordinates[1];
+        oscillator.connect(context.destination);
+        oscillator.noteOn(0);
+        setTimeout(function(){ oscillator.disconnect() }, 500);
+        
         var thisPoint = jQuery('<div/>', {
             class: 'coordinates_div pre-animate'
         }).appendTo('#stage').css( {
