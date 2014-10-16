@@ -10,8 +10,11 @@ $(function() {
   // Initialize varibles
   var $coordinates;
     var pageDimensions = [$('body').width(),$('body').height()];
-    
     var $window = $(window);
+    $( window ).resize( function() {
+        pageDimensions = [$('body').width(),$('body').height()];
+    });
+    
   var $usernameInput = $('.usernameInput'); // Input for username
   var $messages = $('.messages'); // Messages area
   var $inputMessage = $('.inputMessage'); // Input message input box
@@ -34,8 +37,8 @@ $(function() {
 //    It stores the click's coordinates in an object called coordinates
 //    It calls the sendSquare function
 
-    $('#A').click(function(e) {
-    //console.log(e.pageX+ ' , ' + e.pageY);
+    $('#stage').click(function(e) {
+    console.log(e.pageX+ ' , ' + e.pageY);
         coordinates = [e.pageX, e.pageY];
         addTappingPoint(coordinates.concat(pageDimensions));
         sendCoordinates(coordinates.concat(pageDimensions));
@@ -47,7 +50,7 @@ $(function() {
         console.log(final_coordinates);
         var thisPoint = jQuery('<div/>', {
             class: 'coordinates_div pre-animate'
-        }).appendTo('#A').css( {
+        }).appendTo('#stage').css( {
             "left": final_coordinates[0]*(pageDimensions[0] / final_coordinates[2]),
             "top": final_coordinates[1] * ( pageDimensions[1] / final_coordinates[3])
         });
