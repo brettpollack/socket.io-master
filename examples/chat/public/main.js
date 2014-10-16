@@ -44,7 +44,7 @@ $(function() {
 //    This function parses the flatten coordinates into an object again and then displays it as a square
 
     function addTappingPoint(final_coordinates){
-        //console.log(final_coordinates);
+        console.log(final_coordinates);
         var thisPoint = jQuery('<div/>', {
             class: 'coordinates_div pre-animate'
         }).appendTo('#A').css( {
@@ -298,6 +298,9 @@ $(function() {
     socket.on('new coordinates', function (data) {
         // NVS - we receive an object back so we have to explicitly pass
         // the coordinates part of the message (ignoring username)
+        if ("vibrate" in window.navigator) {
+            window.navigator.vibrate(250);
+        }
         addTappingPoint(data.message);
     });
 
