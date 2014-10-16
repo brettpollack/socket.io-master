@@ -7,7 +7,18 @@ $(function() {
         pageDimensions = [$('body').width(),$('body').height()];
     });
 
-    // Prompt for setting a username
+    // function for random color assignment
+    function getRandomColor() {
+        var letters = '0123456789ABCDEF'.split('');
+        var color = '#';
+        for (var i = 0; i < 6; i++ ) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+    }
+    var myColor = getRandomColor();
+    
+    // start out disconnected until acknowledged
     var connected = false;  
 
     var socket = io();
@@ -20,8 +31,8 @@ $(function() {
     $('#stage').click(function(e) {
         console.log(e.pageX+ ' , ' + e.pageY);
         coordinates = [e.pageX, e.pageY];
-        addTappingPoint(coordinates.concat(pageDimensions));
-        sendCoordinates(coordinates.concat(pageDimensions));
+        addTappingPoint(coordinates.concat(pageDimensions).concat(myColor));
+        sendCoordinates(coordinates.concat(pageDimensions).concat(myColor));
     });
 
     //    This function parses the flatten coordinates into an object again and then displays it as a square
@@ -32,7 +43,8 @@ $(function() {
             class: 'coordinates_div pre-animate'
         }).appendTo('#stage').css( {
             "left": final_coordinates[0]*(pageDimensions[0] / final_coordinates[2]),
-            "top": final_coordinates[1] * ( pageDimensions[1] / final_coordinates[3])
+            "top": final_coordinates[1] * ( pageDimensions[1] / final_coordinates[3]),
+            "background-color": final_coordinates[4]
         });
         $(thisPoint).offset()
         $(thisPoint).removeClass('pre-animate')
